@@ -3,8 +3,8 @@ from gevent import monkey;
 monkey.patch_all()
 
 import gevent
-from flask import Flask, render_template, session, request
-from flask.ext.socketio import SocketIO, emit, BaseNamespace
+from flask import Flask, render_template, request
+from flask.ext.socketio import SocketIO, emit
 from twython import TwythonStreamer
 
 app = Flask(__name__)
@@ -37,7 +37,7 @@ class TwitterWatchDog:
 
     def init(self):
         self.streamer = TwitterStreamer(CONF['APP_KEY'], CONF['APP_SECRET'], CONF['OAUTH_TOKEN'], CONF['OAUTH_TOKEN_SECRET'])
-        self.green = gevent.spawn(self.streamer.statuses.filter, track="awssummit")
+        self.green = gevent.spawn(self.streamer.statuses.filter, track="samsung")
 
     def check_alive(self):
         if self.green.dead:
