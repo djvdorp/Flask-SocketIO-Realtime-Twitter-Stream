@@ -34,7 +34,7 @@ class TwitterStreamer(TwythonStreamer):
 class TwitterWatchDog:
     def __init__(self):
         self.streamer = TwitterStreamer(CONF['APP_KEY'], CONF['APP_SECRET'], CONF['OAUTH_TOKEN'], CONF['OAUTH_TOKEN_SECRET'])
-        self.green = gevent.spawn(self.streamer.statuses.filter, track="samsung")
+        self.green = gevent.spawn(self.streamer.statuses.filter, track=CONF['KEYWORD'])
 
     def check_alive(self):
         if self.green.dead:

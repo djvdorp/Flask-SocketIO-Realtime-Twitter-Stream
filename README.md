@@ -10,7 +10,7 @@ $ (venv) pip install -r requirements.txt
 $ (venv) cp config.dist.py config.py
 ```
 
-Then edit config.py with your Twitter credentials and run:
+Then edit config.py with your Twitter credentials and search keyword(s) - comma separated - and run:
 
 ```
 $ (venv) python app.py
