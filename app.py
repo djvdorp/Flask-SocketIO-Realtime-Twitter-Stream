@@ -33,9 +33,6 @@ class TwitterStreamer(TwythonStreamer):
 
 class TwitterWatchDog:
     def __init__(self):
-        self.init()
-
-    def init(self):
         self.streamer = TwitterStreamer(CONF['APP_KEY'], CONF['APP_SECRET'], CONF['OAUTH_TOKEN'], CONF['OAUTH_TOKEN_SECRET'])
         self.green = gevent.spawn(self.streamer.statuses.filter, track="samsung")
 
@@ -45,7 +42,7 @@ class TwitterWatchDog:
             self.streamer.disconnect()
             self.green.kill()
             # then reload
-            self.init()
+            self.__init__()
 
 
 dog = TwitterWatchDog()
