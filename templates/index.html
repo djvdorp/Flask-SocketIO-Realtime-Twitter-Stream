@@ -4,10 +4,15 @@
     <title>Flask-SocketIO Realtime Twitter Stream</title>
     <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
-    <script src="static/linkify.min.js"></script>
-    <script src="static/linkify-jquery.min.js"></script>
+    <script type="text/javascript" src="//maps.google.com/maps/api/js?sensor=false"></script>
+    <script type="text/javascript" src="static/heatmap.js"></script>
+    <script type="text/javascript" src="static/heatmap-gmaps.js"></script>
+    <script type="text/javascript" src="static/linkify.min.js"></script>
+    <script type="text/javascript" src="static/linkify-jquery.min.js"></script>
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function(){
+            var heatmap = null;
+
             namespace = '/tweets'; // change to an empty string to use the global namespace
 
             // the socket.io documentation recommends sending an explicit package upon connection
@@ -17,16 +22,55 @@
             // event handler for server sent data
             // the data is displayed in the "Received" section of the page
             socket.on('tweet', function(msg) {
-                $('#log').prepend('<br><strong><a href="https://twitter.com/' + msg.user.screen_name + '" target="_blank">@' + msg.user.screen_name + '</a></strong>: ' + msg.text);
-                $('#log').linkify({
+                $('#tweetArea').prepend('<br><strong><a href="https://twitter.com/' + msg.user.screen_name + '" target="_blank">@' + msg.user.screen_name + '</a></strong>: ' + msg.text);
+                $('#tweetArea').linkify({
                     target: "_blank"
                 });
+
+                if(msg.geo != null) {
+                    heatmap.addDataPoint(msg.geo.coordinates[0], msg.geo.coordinates[1], 1);
+                }
             });
         });
     </script>
 </head>
 <body>
-    <div id="log" style="overflow:auto;" ></div>
+    <div id="heatmapArea" style="width:800px; height: 440px; margin-right: auto;"></div>
+    <script type="text/javascript" charset="utf-8">
+        window.onload = function(){
+            // standard gmaps initialization
+            var myLatlng = new google.maps.LatLng(48.3333, 16.35);
+            // define map properties
+            var myOptions = {
+              zoom: 2,
+              center: myLatlng,
+              mapTypeId: google.maps.MapTypeId.ROADMAP,
+              disableDefaultUI: false,
+              scrollwheel: true,
+              draggable: true,
+              navigationControl: true,
+              mapTypeControl: false,
+              scaleControl: true,
+              disableDoubleClickZoom: false
+            };
+            // we'll use the heatmapArea
+            var map = new google.maps.Map($("#heatmapArea")[0], myOptions);
+
+            // let's create a heatmap-overlay
+            // with heatmap config properties
+            heatmap = new HeatmapOverlay(map, {
+                "radius":10,
+                "visible":true,
+                "opacity":60,
+                legend: {
+                    position: 'br',
+                    title: 'Twitter'
+                }
+            });
+        };
+    </script>
+
+    <div id="tweetArea" style="overflow:auto; height: 500px;" ></div>
 </body>
 </html>
 
