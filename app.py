@@ -3,6 +3,7 @@ from gevent import monkey;
 monkey.patch_all()
 
 import gevent
+import os
 from flask import Flask, render_template, request
 from flask.ext.socketio import SocketIO, emit
 from twython import TwythonStreamer
@@ -11,9 +12,9 @@ app = Flask(__name__)
 app.debug = True
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
+port = int(os.getenv('VCAP_APP_PORT', 5000))
 
 from config import CONF
-
 
 class TwitterStreamer(TwythonStreamer):
     def __init__(self, *args, **kwargs):
@@ -77,6 +78,6 @@ def tweets_disconnect():
 
 if __name__ == '__main__':
     try:
-        socketio.run(app, port=5000, host="0.0.0.0")
+        socketio.run(app, port=port, host="0.0.0.0")
     except KeyboardInterrupt:
         pass

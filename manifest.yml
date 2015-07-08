@@ -1,0 +1,4 @@
+---
+applications:
+- name: flask-socketio-realtime-twitter-stream
+  memory: 128M
